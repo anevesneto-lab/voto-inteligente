@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Voto Inteligente — Eleições 2026</title>
+<meta name="description" content="Pesquise candidatos, compare históricos e veja como cada político votou de verdade — com dados oficiais, sem propaganda." />
+<style>
+  :root {
+    --green: #1D9E75;
+    --green-light: #E1F5EE;
+    --green-mid: #9FE1CB;
+    --green-dark: #0F6E56;
+    --green-darker: #085041;
+    --blue: #185FA5;
+    --blue-light: #E6F1FB;
+    --blue-mid: #B5D4F4;
+    --amber: #BA7517;
+    --amber-light: #FAEEDA;
+    --amber-mid: #FAC775;
+    --red-light: #FAECE7;
+    --red: #993C1D;
+    --purple-light: #EEEDFE;
+    --purple: #3C3489;
+    --bg: #ffffff;
+    --bg2: #f5f5f3;
+    --bg3: #efefec;
+    --text: #1a1a18;
+    --text2: #6b6b67;
+    --text3: #a0a09b;
+    --border: rgba(0,0,0,0.12);
+    --border2: rgba(0,0,0,0.22);
+    --radius: 10px;
+    --radius-sm: 8px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a18; --bg2: #242422; --bg3: #2e2e2b;
+      --text: #f0f0ec; --text2: #a0a09b; --text3: #6b6b67;
+      --border: rgba(255,255,255,0.12); --border2: rgba(255,255,255,0.22);
+      --green-light: #0a3326; --green-mid: #0f5040;
+      --blue-light: #0a1f38; --blue-mid: #0c3060;
+      --amber-light: #2a1f05; --amber-mid: #5a3a08;
+      --red-light: #2a1008; --purple-light: #1a1640;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { scroll-behavior: smooth; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 16px; line-height: 1.5; }
+
+  .app { max-width: 520px; margin: 0 auto; min-height: 100vh; }
+
+  /* HEADER */
+  .header { position: sticky; top: 0; z-index: 100; background: var(--bg); border-bottom: 0.5px solid var(--border); padding: 0 1rem; }
+  .header-inner { display: flex; align-items: center; justify-content: space-between; height: 52px; }
+  .logo { font-size: 18px; font-weight: 600; color: var(--text); letter-spacing: -0.5px; }
+  .logo span { color: var(--green); }
+  .logo small { font-size: 11px; font-weight: 400; color: var(--text3); margin-left: 6px; }
+
+  /* NAV */
+  .nav { display: flex; overflow-x: auto; border-bottom: 0.5px solid var(--border); background: var(--bg); padding: 0 1rem; scrollbar-width: none; }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav-tab { padding: 10px 14px; font-size: 13px; color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -0.5px; white-space: nowrap; background: none; border-top: none; border-left: none; border-right: none; font-family: inherit; flex-shrink: 0; transition: color 0.15s; }
+  .nav-tab.active { color: var(--green); border-bottom-color: var(--green); font-weight: 500; }
+
+  /* VIEWS */
+  .view { padding: 1rem; display: none; }
+  .view.active { display: block; }
+
+  /* SEARCH */
+  .search-wrap { position: relative; margin-bottom: 0.75rem; }
+  .search-wrap input { width: 100%; padding: 11px 42px 11px 14px; font-size: 15px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: var(--bg); color: var(--text); font-family: inherit; }
+  .search-wrap input:focus { outline: none; border-color: var(--green); }
+  .search-wrap input::placeholder { color: var(--text3); }
+  .search-icon { position: absolute; right: 13px; top: 50%; transform: translateY(-50%); color: var(--text3); font-size: 18px; pointer-events: none; }
+
+  /* FILTERS */
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1rem; }
+  .fbtn { padding: 5px 13px; font-size: 12px; border: 0.5px solid var(--border2); border-radius: 20px; background: var(--bg); color: var(--text2); cursor: pointer; font-family: inherit; transition: all 0.15s; white-space: nowrap; }
+  .fbtn.active { background: var(--green); border-color: var(--green); color: #fff; }
+
+  /* SECTION LABEL */
+  .slabel { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px; }
+
+  /* CARDS */
+  .card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 13px; margin-bottom: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: border-color 0.15s; }
+  .card:hover { border-color: var(--green); }
+  .card.sel-a { border-color: var(--green); background: var(--green-light); }
+  .card.sel-b { border-color: var(--blue); background: var(--blue-light); }
+
+  .ava { width: 44px; height: 44px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: var(--bg2); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: var(--green); }
+  .ava img { width: 100%; height: 100%; object-fit: cover; }
+  .ava.blue { color: var(--blue); }
+
+  .cname { font-size: 15px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cmeta { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+  .badge { font-size: 11px; padding: 2px 8px; border-radius: 10px; background: var(--bg2); color: var(--text2); white-space: nowrap; flex-shrink: 0; }
+  .badge-green { background: var(--green-light); color: var(--green-dark); }
+  .badge-blue { background: var(--blue-light); color: var(--blue); }
+  .badge-amber { background: var(--amber-light); color: var(--amber); }
+  .badge-purple { background: var(--purple-light); color: var(--purple); }
+
+  /* PROGRESS */
+  .pbar { height: 3px; background: var(--bg2); border-radius: 2px; overflow: hidden; margin-bottom: 1rem; }
+  .pbar-fill { height: 100%; background: var(--green); width: 0; transition: width 0.4s; }
+  .pbar-fill.blue { background: var(--blue); }
+  .pbar-fill.amber { background: var(--amber); }
+
+  /* PERFIL */
+  .back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: var(--green); cursor: pointer; margin-bottom: 1.25rem; background: none; border: none; padding: 0; font-family: inherit; }
+
+  .pfhdr { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 1.5rem; }
+  .pfava { width: 68px; height: 68px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: var(--bg2); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 600; color: var(--green); }
+  .pfava img { width: 100%; height: 100%; object-fit: cover; }
+  .pfava.blue { color: var(--blue); }
+  .pfname { font-size: 19px; font-weight: 600; color: var(--text); line-height: 1.3; }
+  .pfsub { font-size: 13px; color: var(--text2); margin-top: 3px; }
+  .tag { display: inline-block; font-size: 11px; padding: 3px 10px; border-radius: 10px; margin-top: 6px; margin-right: 4px; }
+  .tag-green { background: var(--green-light); color: var(--green-dark); }
+  .tag-blue { background: var(--blue-light); color: var(--blue); }
+  .tag-amber { background: var(--amber-light); color: var(--amber); }
+  .tag-purple { background: var(--purple-light); color: var(--purple); }
+
+  /* STATS */
+  .sgrid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; margin-bottom: 1.5rem; }
+  .scard { background: var(--bg2); border-radius: var(--radius-sm); padding: 11px; text-align: center; }
+  .snum { font-size: 20px; font-weight: 600; color: var(--text); }
+  .slbl { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+  /* TABS */
+  .tabs { display: flex; border-bottom: 0.5px solid var(--border); margin-bottom: 1.25rem; overflow-x: auto; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { padding: 8px 14px; font-size: 13px; color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -0.5px; background: none; border-top: none; border-left: none; border-right: none; font-family: inherit; white-space: nowrap; transition: color 0.15s; }
+  .tab.active { color: var(--green); border-bottom-color: var(--green); font-weight: 500; }
+
+  /* PROP / VOT items */
+  .pitem { border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 11px 13px; margin-bottom: 8px; }
+  .ptype { font-size: 11px; color: var(--text3); margin-bottom: 3px; }
+  .ptext { font-size: 13px; color: var(--text); line-height: 1.5; }
+
+  .vitem { border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 11px 13px; margin-bottom: 8px; display: flex; gap: 10px; align-items: flex-start; }
+  .vbadge { flex-shrink: 0; font-size: 11px; font-weight: 500; padding: 3px 8px; border-radius: 10px; margin-top: 1px; }
+  .vb-sim { background: var(--green-light); color: var(--green-dark); }
+  .vb-nao { background: var(--red-light); color: var(--red); }
+  .vb-abs { background: var(--bg2); color: var(--text2); }
+  .vb-aus { background: var(--amber-light); color: var(--amber); }
+  .vdesc { font-size: 13px; color: var(--text); line-height: 1.5; flex: 1; }
+  .vdata { font-size: 11px; color: var(--text3); margin-top: 3px; }
+
+  /* COMPARE */
+  .slots { display: flex; gap: 10px; margin-bottom: 1.25rem; }
+  .slot { flex: 1; border: 0.5px dashed var(--border2); border-radius: var(--radius); padding: 12px; text-align: center; min-height: 82px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; transition: all 0.15s; }
+  .slot.fa { border: 0.5px solid var(--green); background: var(--green-light); }
+  .slot.fb { border: 0.5px solid var(--blue); background: var(--blue-light); }
+  .slot-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .slot-label.a { color: var(--green-dark); }
+  .slot-label.b { color: var(--blue); }
+  .slot-empty { font-size: 12px; color: var(--text3); }
+  .slot-name { font-size: 12px; font-weight: 500; color: var(--text); line-height: 1.3; }
+  .slot-meta { font-size: 11px; color: var(--text2); }
+  .slot-rm { font-size: 11px; color: var(--text3); cursor: pointer; margin-top: 2px; }
+
+  .comp-hdr { display: grid; grid-template-columns: 1fr 36px 1fr; gap: 8px; align-items: center; margin-bottom: 1.5rem; }
+  .comp-side { text-align: center; padding: 12px 8px; border-radius: var(--radius); }
+  .comp-side.a { background: var(--green-light); border: 0.5px solid var(--green-mid); }
+  .comp-side.b { background: var(--blue-light); border: 0.5px solid var(--blue-mid); }
+  .comp-ava { width: 46px; height: 46px; border-radius: 50%; overflow: hidden; margin: 0 auto 7px; background: var(--bg2); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; }
+  .comp-ava img { width: 100%; height: 100%; object-fit: cover; }
+  .comp-ava.a { color: var(--green); }
+  .comp-ava.b { color: var(--blue); }
+  .comp-name { font-size: 12px; font-weight: 500; color: var(--text); line-height: 1.3; }
+  .comp-sub { font-size: 11px; color: var(--text2); margin-top: 2px; }
+  .vs-txt { text-align: center; font-size: 12px; color: var(--text3); font-weight: 500; }
+
+  .comp-row { display: grid; grid-template-columns: 1fr 90px 1fr; gap: 8px; align-items: center; padding: 9px 0; border-bottom: 0.5px solid var(--border); }
+  .comp-row:last-child { border-bottom: none; }
+  .comp-val { text-align: center; font-size: 18px; font-weight: 600; color: var(--text); }
+  .comp-val.win-a { color: var(--green); }
+  .comp-val.win-b { color: var(--blue); }
+  .comp-lbl { text-align: center; font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.3px; line-height: 1.4; }
+
+  .vot-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; align-items: start; padding: 8px 0; border-bottom: 0.5px solid var(--border); }
+  .vot-row:last-child { border-bottom: none; }
+  .vot-ctr { font-size: 12px; color: var(--text2); text-align: center; line-height: 1.4; }
+  .vot-side { display: flex; justify-content: center; }
+
+  /* INFO ROWS */
+  .irow { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 0.5px solid var(--border); font-size: 13px; }
+  .irow:last-child { border-bottom: none; }
+  .ilbl { color: var(--text2); }
+  .ival { color: var(--text); font-weight: 500; text-align: right; max-width: 58%; }
+
+  /* BENS */
+  .bem { border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 11px 13px; margin-bottom: 8px; }
+  .bem-tipo { font-size: 11px; color: var(--text3); margin-bottom: 3px; }
+  .bem-val { font-size: 15px; font-weight: 600; color: var(--text); }
+  .bem-desc { font-size: 12px; color: var(--text2); margin-top: 3px; }
+
+  /* AVISO */
+  .aviso { border-radius: var(--radius); padding: 13px 15px; margin-bottom: 1.25rem; }
+  .aviso.amber { background: var(--amber-light); border: 0.5px solid var(--amber-mid); }
+  .aviso.green { background: var(--green-light); border: 0.5px solid var(--green-mid); }
+  .aviso.blue { background: var(--blue-light); border: 0.5px solid var(--blue-mid); }
+  .aviso-t { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+  .aviso.amber .aviso-t { color: #633806; }
+  .aviso.green .aviso-t { color: var(--green-darker); }
+  .aviso.blue .aviso-t { color: #042C53; }
+  .aviso-txt { font-size: 12px; line-height: 1.5; }
+  .aviso.amber .aviso-txt { color: var(--amber); }
+  .aviso.green .aviso-txt { color: var(--green-dark); }
+  .aviso.blue .aviso-txt { color: var(--blue); }
+
+  /* BTNS */
+  .abtn { width: 100%; padding: 11px; border: 0.5px solid var(--green); border-radius: var(--radius-sm); background: none; color: var(--green); font-size: 14px; cursor: pointer; margin-bottom: 8px; font-family: inherit; transition: background 0.15s; text-align: center; }
+  .abtn:hover { background: var(--green-light); }
+  .abtn.solid { background: var(--green); color: #fff; border-color: var(--green); }
+  .abtn.solid:hover { background: var(--green-dark); }
+  .abtn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* LANDING */
+  .lp-hero { text-align: center; padding: 3rem 0 2rem; }
+  .lp-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 5px 14px; border-radius: 20px; background: var(--green-light); color: var(--green-dark); margin-bottom: 1.5rem; border: 0.5px solid var(--green-mid); }
+  .lp-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
+  .lp-logo { font-size: 38px; font-weight: 700; letter-spacing: -1.5px; margin-bottom: 4px; }
+  .lp-logo span { color: var(--green); }
+  .lp-ano { font-size: 13px; color: var(--text3); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1.5rem; }
+  .lp-desc { font-size: 16px; color: var(--text2); line-height: 1.7; margin-bottom: 2rem; max-width: 380px; margin-left: auto; margin-right: auto; }
+  .lp-desc strong { color: var(--text); font-weight: 500; }
+  .cta-form { display: flex; flex-direction: column; gap: 10px; max-width: 360px; margin: 0 auto 1rem; }
+  .cta-input { padding: 13px 16px; font-size: 15px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: var(--bg); color: var(--text); font-family: inherit; width: 100%; }
+  .cta-input:focus { outline: none; border-color: var(--green); }
+  .cta-btn { padding: 13px; font-size: 15px; font-weight: 500; border-radius: var(--radius); background: var(--green); color: #fff; border: none; cursor: pointer; font-family: inherit; transition: background 0.15s; }
+  .cta-btn:hover { background: var(--green-dark); }
+  .cta-legal { font-size: 11px; color: var(--text3); text-align: center; }
+  .success-box { display: none; text-align: center; padding: 1.5rem; background: var(--green-light); border: 0.5px solid var(--green-mid); border-radius: var(--radius); max-width: 360px; margin: 0 auto; }
+  .success-t { font-size: 16px; font-weight: 500; color: var(--green-dark); margin-bottom: 6px; }
+  .success-tx { font-size: 13px; color: var(--green); line-height: 1.5; }
+  .lp-counter { font-size: 13px; color: var(--text3); text-align: center; margin-top: 1rem; }
+  .lp-counter strong { color: var(--text); }
+  .lp-div { height: 0.5px; background: var(--border); margin: 2.5rem 0; }
+  .lp-h2 { font-size: 18px; font-weight: 600; color: var(--text); text-align: center; margin-bottom: 1.5rem; letter-spacing: -0.3px; }
+  .feat { border: 0.5px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 10px; display: flex; gap: 13px; align-items: flex-start; }
+  .feat-ico { width: 38px; height: 38px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 17px; }
+  .feat-t { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+  .feat-d { font-size: 13px; color: var(--text2); line-height: 1.5; }
+  .step { display: flex; gap: 13px; align-items: flex-start; margin-bottom: 1.25rem; }
+  .step-n { width: 27px; height: 27px; border-radius: 50%; background: var(--green); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; margin-top: 2px; }
+  .step-t { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+  .step-d { font-size: 13px; color: var(--text2); line-height: 1.5; }
+  .data-box { background: var(--bg2); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1.5rem; }
+  .data-t { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 10px; }
+  .data-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 0.5px solid var(--border); font-size: 13px; }
+  .data-row:last-child { border-bottom: none; }
+  .data-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .data-nome { color: var(--text); font-weight: 500; flex: 1; }
+  .data-desc { font-size: 12px; color: var(--text3); }
+  .manifesto { border-left: 2px solid var(--green); padding: 1rem 1.25rem; margin-bottom: 1.5rem; }
+  .manifesto p { font-size: 14px; color: var(--text2); line-height: 1.7; margin-bottom: 0.75rem; }
+  .manifesto p:last-child { margin-bottom: 0; }
+  .manifesto strong { color: var(--text); font-weight: 500; }
+  .lp-footer { text-align: center; padding: 2rem 0 0; border-top: 0.5px solid var(--border); margin-top: 2.5rem; }
+  .lp-footer-logo { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .lp-footer-logo span { color: var(--green); }
+  .lp-footer-txt { font-size: 12px; color: var(--text3); line-height: 1.6; }
+  .lp-footer-links { display: flex; justify-content: center; gap: 16px; margin-top: 10px; flex-wrap: wrap; }
+  .lp-flink { font-size: 12px; color: var(--text3); cursor: pointer; }
+  .lp-flink:hover { color: var(--green); }
+
+  /* UTILS */
+  .loading { text-align: center; padding: 2rem; color: var(--text3); font-size: 14px; }
+  .dot::after { content: '.'; animation: dots 1.2s infinite; }
+  @keyframes dots { 0%{content:'.'}33%{content:'..'}66%{content:'...'} }
+  .erro { text-align: center; padding: 1.5rem; color: var(--text2); font-size: 14px; line-height: 1.6; }
+  .fonte { font-size: 11px; color: var(--text3); text-align: center; padding: 1rem 0; border-top: 0.5px solid var(--border); margin-top: 1rem; }
+  .fonte a { color: var(--green); text-decoration: none; }
+  .hidden { display: none !important; }
+
+  /* CARGO section */
+  .cargo-sec { margin-bottom: 1.25rem; }
+  .cargo-tit { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .cargo-cnt { font-size: 12px; color: var(--text3); font-weight: 400; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <div class="header-inner">
+      <div class="logo">Voto<span>Inteligente</span><small>2026</small></div>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="nav-tab active" onclick="showView('lp',this)">Início</button>
+    <button class="nav-tab" onclick="showView('dep',this)">Deputados</button>
+    <button class="nav-tab" onclick="showView('sen',this)">Senadores</button>
+    <button class="nav-tab" onclick="showView('tse',this)">Eleições 2026</button>
+    <button class="nav-tab" onclick="showView('comp',this)">Comparar</button>
+  </div>
+
+  <!-- ========== LANDING ========== -->
+  <div id="view-lp" class="view active" style="padding:0 1rem 3rem">
+    <div class="lp-hero">
+      <div class="lp-badge"><div class="lp-badge-dot"></div>Lançamento em 2026</div>
+      <div class="lp-logo">Voto<span>Inteligente</span></div>
+      <div class="lp-ano">Eleições 2026</div>
+      <p class="lp-desc">Pesquise candidatos, compare históricos e veja <strong>como cada político votou de verdade</strong> — com dados oficiais, sem propaganda e sem achismo.</p>
+      <div id="lp-form">
+        <div class="cta-form">
+          <input class="cta-input" type="email" id="email1" placeholder="Seu melhor e-mail" />
+          <button class="cta-btn" onclick="cadastrar('email1','lp-form','lp-success')">Quero ser avisado do lançamento</button>
+        </div>
+        <p class="cta-legal">Sem spam. Só um aviso quando o app estiver no ar.</p>
+      </div>
+      <div id="lp-success" class="success-box">
+        <div style="font-size:26px;margin-bottom:8px">✓</div>
+        <div class="success-t">Cadastro confirmado!</div>
+        <div class="success-tx">Você será avisado assim que o Voto Inteligente estiver disponível.</div>
+      </div>
+      <div class="lp-counter"><strong id="lp-count">247</strong> pessoas já se cadastraram</div>
+    </div>
+
+    <div class="lp-div"></div>
+    <div class="lp-h2">O que você vai encontrar</div>
+    <div class="feat"><div class="feat-ico" style="background:var(--green-light)">⊙</div><div><div class="feat-t">Perfil completo de cada candidato</div><div class="feat-d">Histórico de mandatos, proposições, presença nas sessões e gastos com verbas públicas.</div></div></div>
+    <div class="feat"><div class="feat-ico" style="background:var(--blue-light)">⇄</div><div><div class="feat-t">Compare candidatos lado a lado</div><div class="feat-d">Coloque dois candidatos frente a frente e veja as diferenças reais de atuação e histórico.</div></div></div>
+    <div class="feat"><div class="feat-ico" style="background:var(--amber-light)">◎</div><div><div class="feat-t">Como votou em cada projeto</div><div class="feat-d">Saúde, educação, segurança, economia — veja o voto real em cada pauta importante.</div></div></div>
+    <div class="feat"><div class="feat-ico" style="background:var(--purple-light)">≡</div><div><div class="feat-t">Bens e patrimônio declarados</div><div class="feat-d">Acesse os bens declarados ao TSE com contexto e fonte oficial para cada candidato.</div></div></div>
+
+    <div class="lp-div"></div>
+    <div class="lp-h2">Como funciona</div>
+    <div class="step"><div class="step-n">1</div><div><div class="step-t">Busque o candidato</div><div class="step-d">Digite o nome, filtre por estado, partido ou cargo. Encontre qualquer candidato a deputado, senador, governador ou presidente.</div></div></div>
+    <div class="step"><div class="step-n">2</div><div><div class="step-t">Veja o histórico real</div><div class="step-d">Acesse proposições, votações e presença com dados diretamente da Câmara, do Senado e do TSE — sem intermediários.</div></div></div>
+    <div class="step"><div class="step-n">3</div><div><div class="step-t">Compare e decida</div><div class="step-d">Use a comparação para colocar candidatos lado a lado. O app não diz em quem votar — você decide com base em fatos.</div></div></div>
+
+    <div class="lp-div"></div>
+    <div class="lp-h2">De onde vêm os dados</div>
+    <div class="data-box">
+      <div class="data-t">Fontes oficiais e públicas — 100% gratuitas</div>
+      <div class="data-row"><div class="data-dot" style="background:var(--green)"></div><div class="data-nome">API da Câmara dos Deputados</div><div class="data-desc">Deputados, votações, proposições</div></div>
+      <div class="data-row"><div class="data-dot" style="background:var(--blue)"></div><div class="data-nome">API do Senado Federal</div><div class="data-desc">Senadores, matérias, votações</div></div>
+      <div class="data-row"><div class="data-dot" style="background:var(--amber)"></div><div class="data-nome">TSE Dados Abertos</div><div class="data-desc">Candidatos, bens declarados, resultados</div></div>
+    </div>
+
+    <div class="manifesto">
+      <p>O Voto Inteligente não é de esquerda nem de direita. Não tem patrocinador político. Não tem editorial.</p>
+      <p>É um app feito por um cidadão que acredita que <strong>a melhor arma contra a desinformação são os próprios dados públicos</strong> — organizados de forma simples e acessível para qualquer pessoa.</p>
+      <p>Cada informação tem fonte. Cada dado tem origem. Você decide o que fazer com isso.</p>
+    </div>
+
+    <div class="lp-div"></div>
+    <div style="text-align:center;padding:1rem 0">
+      <div class="lp-h2" style="margin-bottom:0.75rem">Pronto para votar com informação?</div>
+      <p style="font-size:14px;color:var(--text2);margin-bottom:1.5rem;line-height:1.6">Seja um dos primeiros a usar o Voto Inteligente nas eleições de 2026.</p>
+      <div class="cta-form" style="max-width:360px;margin:0 auto 1rem">
+        <input class="cta-input" type="email" id="email2" placeholder="Seu melhor e-mail" />
+        <button class="cta-btn" onclick="cadastrar2()">Quero ser avisado</button>
+      </div>
+      <p class="cta-legal">Grátis. Sem spam. Sem política.</p>
+    </div>
+
+    <div class="lp-footer">
+      <div class="lp-footer-logo">Voto<span>Inteligente</span></div>
+      <div class="lp-footer-txt">Dados de fontes oficiais: Câmara dos Deputados, Senado Federal e TSE.<br>Projeto independente, sem vínculo partidário ou comercial.</div>
+      <div class="lp-footer-links">
+        <span class="lp-flink">Privacidade</span>
+        <span class="lp-flink">Metodologia</span>
+        <span class="lp-flink">Colaborar</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== DEPUTADOS ========== -->
+  <div id="view-dep" class="view">
+    <div id="dep-lista">
+      <div class="search-wrap"><input type="text" id="busca-dep" placeholder="Buscar deputado..." oninput="filtrarDep()" /><span class="search-icon">&#9740;</span></div>
+      <div class="filters" id="filtros-dep"></div>
+      <div class="pbar" id="pb-dep"><div class="pbar-fill" id="pf-dep"></div></div>
+      <div class="slabel" id="lbl-dep">Carregando deputados...</div>
+      <div id="lista-dep"></div>
+      <div class="fonte">Dados: <a href="https://dadosabertos.camara.leg.br" target="_blank">dadosabertos.camara.leg.br</a></div>
+    </div>
+    <div id="dep-perfil" class="hidden">
+      <button class="back-btn" onclick="voltarLista('dep')">&#8592; voltar</button>
+      <div id="dep-pfhdr"></div>
+      <div class="tabs" id="dep-tabs">
+        <button class="tab active" onclick="depTab('prop',this)">Proposições</button>
+        <button class="tab" onclick="depTab('vot',this)">Votações</button>
+      </div>
+      <div id="dep-tab-prop"></div>
+      <div id="dep-tab-vot" class="hidden"></div>
+      <div class="fonte"><a href="https://dadosabertos.camara.leg.br" target="_blank">API oficial da Câmara dos Deputados</a></div>
+    </div>
+  </div>
+
+  <!-- ========== SENADORES ========== -->
+  <div id="view-sen" class="view">
+    <div id="sen-lista">
+      <div class="search-wrap"><input type="text" id="busca-sen" placeholder="Buscar senador..." oninput="filtrarSen()" /><span class="search-icon">&#9740;</span></div>
+      <div class="filters" id="filtros-sen"></div>
+      <div class="pbar" id="pb-sen"><div class="pbar-fill blue" id="pf-sen"></div></div>
+      <div class="slabel" id="lbl-sen">Carregando senadores...</div>
+      <div id="lista-sen"></div>
+      <div class="fonte">Dados: <a href="https://legis.senado.leg.br/dadosabertos" target="_blank">legis.senado.leg.br/dadosabertos</a></div>
+    </div>
+    <div id="sen-perfil" class="hidden">
+      <button class="back-btn" onclick="voltarLista('sen')">&#8592; voltar</button>
+      <div id="sen-pfhdr"></div>
+      <div class="tabs" id="sen-tabs">
+        <button class="tab active" onclick="senTab('mat',this)">Matérias</button>
+        <button class="tab" onclick="senTab('vot',this)">Votações</button>
+      </div>
+      <div id="sen-tab-mat"></div>
+      <div id="sen-tab-vot" class="hidden"></div>
+      <div class="fonte"><a href="https://legis.senado.leg.br/dadosabertos" target="_blank">API oficial do Senado Federal</a></div>
+    </div>
+  </div>
+
+  <!-- ========== TSE 2026 ========== -->
+  <div id="view-tse" class="view">
+    <div id="tse-lista">
+      <div class="aviso amber">
+        <div class="aviso-t">Eleições 2026 — dados em formação</div>
+        <div class="aviso-txt">O TSE abre o cadastro de candidaturas próximo ao período eleitoral. Os dados abaixo são de 2022 como referência histórica. Os dados de 2026 serão integrados assim que disponíveis.</div>
+      </div>
+      <div class="filters" id="filtros-cargo">
+        <button class="fbtn active" onclick="setCargoF('todos',this)">Todos</button>
+        <button class="fbtn" onclick="setCargoF('presidente',this)">Presidente</button>
+        <button class="fbtn" onclick="setCargoF('governador',this)">Governador</button>
+        <button class="fbtn" onclick="setCargoF('senador',this)">Senador</button>
+        <button class="fbtn" onclick="setCargoF('deputado_federal',this)">Dep. Federal</button>
+      </div>
+      <div class="search-wrap"><input type="text" id="busca-tse" placeholder="Buscar candidato..." oninput="filtrarTSE()" /><span class="search-icon">&#9740;</span></div>
+      <div class="slabel" id="lbl-tse">18 candidatos (referência 2022)</div>
+      <div id="lista-tse"></div>
+      <div class="fonte">Dados: <a href="https://dadosabertos.tse.jus.br" target="_blank">dadosabertos.tse.jus.br</a> · Referência: eleição 2022</div>
+    </div>
+    <div id="tse-perfil" class="hidden">
+      <button class="back-btn" onclick="voltarLista('tse')">&#8592; voltar</button>
+      <div id="tse-pfhdr"></div>
+      <div class="tabs" id="tse-tabs">
+        <button class="tab active" onclick="tseTab('dados',this)">Dados gerais</button>
+        <button class="tab" onclick="tseTab('bens',this)">Bens declarados</button>
+        <button class="tab" onclick="tseTab('hist',this)">Histórico</button>
+      </div>
+      <div id="tse-tab-dados"></div>
+      <div id="tse-tab-bens" class="hidden"></div>
+      <div id="tse-tab-hist" class="hidden"></div>
+      <div class="fonte"><a href="https://dadosabertos.tse.jus.br" target="_blank">TSE Dados Abertos</a> · Eleição 2022</div>
+    </div>
+  </div>
+
+  <!-- ========== COMPARAR ========== -->
+  <div id="view-comp" class="view">
+    <div class="slots">
+      <div class="slot" id="slot-a"><div class="slot-label a">Candidato A</div><div class="slot-empty">Selecione abaixo</div></div>
+      <div class="vs-txt">vs</div>
+      <div class="slot" id="slot-b"><div class="slot-label b">Candidato B</div><div class="slot-empty">Selecione abaixo</div></div>
+    </div>
+    <div id="comp-busca-area">
+      <div class="search-wrap"><input type="text" id="busca-comp" placeholder="Buscar deputado ou senador..." oninput="filtrarComp()" /><span class="search-icon">&#9740;</span></div>
+      <div class="slabel" id="lbl-comp">Escolha o candidato A</div>
+      <div id="lista-comp"></div>
+    </div>
+    <button id="btn-comp" class="abtn solid" onclick="executarComp()" disabled>Comparar agora</button>
+    <div id="comp-res"></div>
+    <div class="fonte">Dados: <a href="https://dadosabertos.camara.leg.br" target="_blank">Câmara</a> · <a href="https://legis.senado.leg.br/dadosabertos" target="_blank">Senado</a></div>
+  </div>
+
+</div><!-- end .app -->
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+let deps = [], sens = [], todos = [];
+let selA = null, selB = null;
+let depAtual = {}, senAtual = {}, tseAtual = {};
+let depVotOk = false, senVotOk = false;
+let cargoFAtivo = 'todos';
+let depFAtivo = 'todos', senFAtivo = 'todos';
+let lpCount = 247;
+
+const MOCK_CANDS = [
+  {id:1,nome:'LUIZ INÁCIO LULA DA SILVA',urna:'LULA',cargo:'presidente',partido:'PT',uf:'BR',numero:13,bens:1890000,ocup:'Ex-presidente da República',nasc:'1945',gen:'Masculino',grau:'Ensino Fundamental Incompleto',eleito:true},
+  {id:2,nome:'JAIR MESSIAS BOLSONARO',urna:'BOLSONARO',cargo:'presidente',partido:'PL',uf:'BR',numero:22,bens:2200000,ocup:'Presidente da República',nasc:'1955',gen:'Masculino',grau:'Ensino Superior Completo',eleito:false},
+  {id:3,nome:'SIMONE NASSAR TEBET',urna:'SIMONE TEBET',cargo:'presidente',partido:'MDB',uf:'BR',numero:15,bens:3100000,ocup:'Senadora',nasc:'1970',gen:'Feminino',grau:'Doutorado',eleito:false},
+  {id:4,nome:'CIRO FERREIRA GOMES',urna:'CIRO GOMES',cargo:'presidente',partido:'PDT',uf:'BR',numero:12,bens:5400000,ocup:'Ex-governador do Ceará',nasc:'1957',gen:'Masculino',grau:'Ensino Superior Completo',eleito:false},
+  {id:5,nome:'TARCÍSIO DE FREITAS',urna:'TARCÍSIO',cargo:'governador',partido:'Republicanos',uf:'SP',numero:10,bens:890000,ocup:'Ministro da Infraestrutura',nasc:'1975',gen:'Masculino',grau:'Doutorado',eleito:true},
+  {id:6,nome:'FERNANDO HADDAD',urna:'HADDAD',cargo:'governador',partido:'PT',uf:'SP',numero:13,bens:1200000,ocup:'Ex-prefeito de São Paulo',nasc:'1963',gen:'Masculino',grau:'Doutorado',eleito:false},
+  {id:7,nome:'ROMEU ZEMA NETO',urna:'ROMEU ZEMA',cargo:'governador',partido:'Novo',uf:'MG',numero:30,bens:98000000,ocup:'Governador de Minas Gerais',nasc:'1965',gen:'Masculino',grau:'Ensino Superior Completo',eleito:true},
+  {id:8,nome:'FLÁVIO BOLSONARO',urna:'FLÁVIO BOLSONARO',cargo:'senador',partido:'PL',uf:'RJ',numero:22,bens:4200000,ocup:'Senador',nasc:'1981',gen:'Masculino',grau:'Ensino Superior Completo',eleito:true},
+  {id:9,nome:'MARCOS PONTES',urna:'ASTRONAUTA MARCOS PONTES',cargo:'senador',partido:'PL',uf:'SP',numero:22,bens:1100000,ocup:'Astronauta / Ex-ministro',nasc:'1963',gen:'Masculino',grau:'Doutorado',eleito:false},
+  {id:10,nome:'SERGIO MORO',urna:'SERGIO MORO',cargo:'senador',partido:'União',uf:'PR',numero:44,bens:3600000,ocup:'Ex-juiz federal',nasc:'1972',gen:'Masculino',grau:'Doutorado',eleito:true},
+  {id:11,nome:'DAMARES REGINA ALVES',urna:'DAMARES ALVES',cargo:'senador',partido:'Republicanos',uf:'DF',numero:10,bens:320000,ocup:'Ex-ministra da Mulher',nasc:'1962',gen:'Feminino',grau:'Ensino Superior Completo',eleito:true},
+  {id:12,nome:'KIM KATAGUIRI',urna:'KIM KATAGUIRI',cargo:'deputado_federal',partido:'União',uf:'SP',numero:44456,bens:540000,ocup:'Deputado federal',nasc:'1995',gen:'Masculino',grau:'Ensino Superior Incompleto',eleito:true},
+  {id:13,nome:'TABATA AMARAL',urna:'TABATA AMARAL',cargo:'deputado_federal',partido:'PSB',uf:'SP',numero:40123,bens:280000,ocup:'Deputada federal',nasc:'1993',gen:'Feminino',grau:'Ensino Superior Completo',eleito:true},
+  {id:14,nome:'NIKOLAS FERREIRA',urna:'NIKOLAS FERREIRA',cargo:'deputado_federal',partido:'PL',uf:'MG',numero:22222,bens:420000,ocup:'Vereador',nasc:'1996',gen:'Masculino',grau:'Ensino Superior Incompleto',eleito:true},
+  {id:15,nome:'GUILHERME BOULOS',urna:'BOULOS',cargo:'deputado_federal',partido:'PSOL',uf:'SP',numero:50123,bens:180000,ocup:'Movimentos sociais',nasc:'1982',gen:'Masculino',grau:'Ensino Superior Completo',eleito:true},
+  {id:16,nome:'GLEISI HOFFMANN',urna:'GLEISI HOFFMANN',cargo:'deputado_federal',partido:'PT',uf:'PR',numero:13222,bens:1560000,ocup:'Presidente do PT',nasc:'1965',gen:'Feminino',grau:'Doutorado',eleito:true},
+  {id:17,nome:'ARTHUR LIRA',urna:'ARTHUR LIRA',cargo:'deputado_federal',partido:'PP',uf:'AL',numero:11111,bens:2800000,ocup:'Presidente da Câmara',nasc:'1975',gen:'Masculino',grau:'Ensino Superior Completo',eleito:true},
+  {id:18,nome:'RODRIGO PACHECO',urna:'RODRIGO PACHECO',cargo:'senador',partido:'PSD',uf:'MG',numero:55,bens:1900000,ocup:'Presidente do Senado',nasc:'1981',gen:'Masculino',grau:'Doutorado',eleito:true},
+];
+
+const CARGO_INFO = {
+  presidente:{label:'Presidente',badge:'badge-amber'},
+  governador:{label:'Governador',badge:'badge-green'},
+  senador:{label:'Senador',badge:'badge-blue'},
+  deputado_federal:{label:'Dep. Federal',badge:'badge-purple'},
+};
+
+// ============================================================
+// UTILS
+// ============================================================
+function ini(n) {
+  const p=(n||'').trim().split(' ');
+  return ((p[0]||' ')[0]+((p[p.length-1]||' ')[0]||'')).toUpperCase();
+}
+function brl(v) {
+  const n=parseFloat((v||0).toString().replace(',','.'));
+  if(isNaN(n)||n===0) return '—';
+  return n.toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0});
+}
+function vbCls(t) {
+  t=(t||'').toLowerCase();
+  if(t==='sim') return 'vb-sim';
+  if(t==='não'||t==='nao') return 'vb-nao';
+  if(t==='ausente') return 'vb-aus';
+  return 'vb-abs';
+}
+function vbLbl(t) {
+  t=(t||'').toLowerCase();
+  if(t==='sim') return 'A favor';
+  if(t==='não'||t==='nao') return 'Contra';
+  if(t==='ausente') return 'Ausente';
+  return 'Abstenção';
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function showView(id, btn) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('view-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='sen' && !sens.length) carregarSens();
+  if(id==='comp') renderComp(todos);
+}
+
+// ============================================================
+// LANDING
+// ============================================================
+function cadastrar(inputId, formId, successId) {
+  const v=document.getElementById(inputId).value.trim();
+  if(!v||!v.includes('@')) { document.getElementById(inputId).style.borderColor='#E24B4A'; setTimeout(()=>document.getElementById(inputId).style.borderColor='',1500); return; }
+  document.getElementById(formId).style.display='none';
+  document.getElementById(successId).style.display='block';
+  lpCount++; document.getElementById('lp-count').textContent=lpCount;
+}
+function cadastrar2() {
+  const el=document.getElementById('email2');
+  if(!el.value.trim()||!el.value.includes('@')) { el.style.borderColor='#E24B4A'; setTimeout(()=>el.style.borderColor='',1500); return; }
+  el.value=''; el.placeholder='Cadastrado!'; el.style.borderColor='var(--green)';
+  lpCount++; document.getElementById('lp-count').textContent=lpCount;
+}
+
+// ============================================================
+// DEPUTADOS
+// ============================================================
+async function carregarDeps() {
+  const fill=document.getElementById('pf-dep');
+  fill.style.width='25%';
+  try {
+    const r=await fetch('https://dadosabertos.camara.leg.br/api/v2/deputados?ordem=ASC&ordenarPor=nome&itens=50');
+    fill.style.width='75%';
+    deps=(await r.json()).dados||[];
+    fill.style.width='100%';
+    setTimeout(()=>document.getElementById('pb-dep').style.display='none',400);
+    const pts=[...new Set(deps.map(d=>d.siglaPartido))].sort().slice(0,6);
+    document.getElementById('filtros-dep').innerHTML=[
+      '<button class="fbtn active" onclick="setDepF(\'todos\',this)">Todos</button>',
+      ...pts.map(p=>`<button class="fbtn" onclick="setDepF('${p}',this)">${p}</button>`)
+    ].join('');
+    renderDeps(deps);
+    atualizarTodos();
+  } catch(e) {
+    document.getElementById('lbl-dep').textContent='';
+    document.getElementById('lista-dep').innerHTML='<div class="erro">Erro ao conectar à API da Câmara.<br>Verifique sua conexão.</div>';
+  }
+}
+function setDepF(p,btn) {
+  depFAtivo=p;
+  document.getElementById('filtros-dep').querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); filtrarDep();
+}
+function filtrarDep() {
+  const q=document.getElementById('busca-dep').value.toLowerCase();
+  let l=deps;
+  if(depFAtivo!=='todos') l=l.filter(d=>d.siglaPartido===depFAtivo);
+  if(q) l=l.filter(d=>d.nome.toLowerCase().includes(q));
+  renderDeps(l);
+}
+function renderDeps(lista) {
+  document.getElementById('lbl-dep').textContent=lista.length+' deputados encontrados';
+  document.getElementById('lista-dep').innerHTML=lista.slice(0,30).map(d=>`
+    <div class="card" onclick="abrirDep(${d.id},'${d.nome.replace(/'/g,"\\'")}','${d.siglaPartido}','${d.siglaUf}','${d.urlFoto}')">
+      <div class="ava"><img src="${d.urlFoto}" onerror="this.parentElement.innerHTML='${ini(d.nome)}'" /></div>
+      <div style="flex:1;min-width:0"><div class="cname">${d.nome}</div><div class="cmeta">${d.siglaPartido} · ${d.siglaUf}</div></div>
+      <div class="badge">${d.siglaUf}</div>
+    </div>`).join('')||'<div class="erro">Nenhum resultado.</div>';
+}
+async function abrirDep(id,nome,partido,uf,foto) {
+  depAtual={id,nome,partido,uf,foto}; depVotOk=false;
+  document.getElementById('dep-lista').classList.add('hidden');
+  document.getElementById('dep-perfil').classList.remove('hidden');
+  const av=foto?`<img src="${foto}" onerror="this.parentElement.innerHTML='${ini(nome)}'" />`:ini(nome);
+  document.getElementById('dep-pfhdr').innerHTML=`
+    <div class="pfhdr">
+      <div class="pfava">${av}</div>
+      <div><div class="pfname">${nome}</div><div class="pfsub">${uf} · Câmara dos Deputados</div><span class="tag tag-green">${partido}</span></div>
+    </div>
+    <div class="sgrid" id="dep-stats">
+      <div class="scard"><div class="snum">—</div><div class="slbl">proposições</div></div>
+      <div class="scard"><div class="snum">ativo</div><div class="slbl">status</div></div>
+      <div class="scard"><div class="snum">—</div><div class="slbl">gabinete</div></div>
+    </div>`;
+  document.getElementById('dep-tab-prop').innerHTML='<div class="loading">Carregando <span class="dot"></span></div>';
+  document.getElementById('dep-tab-vot').innerHTML='';
+  document.getElementById('dep-tabs').querySelectorAll('.tab')[0].classList.add('active');
+  document.getElementById('dep-tabs').querySelectorAll('.tab')[1].classList.remove('active');
+  document.getElementById('dep-tab-prop').classList.remove('hidden');
+  document.getElementById('dep-tab-vot').classList.add('hidden');
+  try {
+    const [rD,rP]=await Promise.all([
+      fetch(`https://dadosabertos.camara.leg.br/api/v2/deputados/${id}`),
+      fetch(`https://dadosabertos.camara.leg.br/api/v2/proposicoes?idDeputadoAutor=${id}&itens=8&ordem=DESC&ordenarPor=id`)
+    ]);
+    const dep=(await rD.json()).dados;
+    const props=(await rP.json()).dados||[];
+    const gab=dep.gabinete||{};
+    document.getElementById('dep-stats').innerHTML=`
+      <div class="scard"><div class="snum">${props.length}</div><div class="slbl">proposições</div></div>
+      <div class="scard"><div class="snum">${dep.dataFalecimento?'inativo':'ativo'}</div><div class="slbl">status</div></div>
+      <div class="scard"><div class="snum">${gab.sala||'—'}</div><div class="slbl">gabinete</div></div>`;
+    document.getElementById('dep-tab-prop').innerHTML=(props.length?props.map(p=>`
+      <div class="pitem"><div class="ptype">${p.siglaTipo} ${p.numero}/${p.ano}</div><div class="ptext">${(p.ementa||'Sem descrição').slice(0,140)}${(p.ementa||'').length>140?'...':''}</div></div>`).join(''):'<div class="erro">Nenhuma proposição.</div>');
+  } catch(e) {
+    document.getElementById('dep-tab-prop').innerHTML='<div class="erro">Erro ao carregar dados.</div>';
+  }
+}
+function depTab(tab,btn) {
+  document.getElementById('dep-tabs').querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('dep-tab-prop').classList.toggle('hidden',tab!=='prop');
+  document.getElementById('dep-tab-vot').classList.toggle('hidden',tab!=='vot');
+  if(tab==='vot'&&!depVotOk) { depVotOk=true; carregarDepVot(); }
+}
+async function carregarDepVot() {
+  document.getElementById('dep-tab-vot').innerHTML='<div class="loading">Carregando votações <span class="dot"></span></div>';
+  try {
+    const r=await fetch(`https://dadosabertos.camara.leg.br/api/v2/deputados/${depAtual.id}/votacoes?itens=15&ordem=DESC&ordenarPor=dataHoraVoto`);
+    const dados=(await r.json()).dados||[];
+    const sim=dados.filter(v=>(v.tipoVoto||'').toLowerCase()==='sim').length;
+    const nao=dados.filter(v=>['não','nao'].includes((v.tipoVoto||'').toLowerCase())).length;
+    const aus=dados.filter(v=>(v.tipoVoto||'').toLowerCase()==='ausente').length;
+    document.getElementById('dep-tab-vot').innerHTML=`
+      <div class="sgrid" style="margin-bottom:1rem">
+        <div class="scard"><div class="snum" style="color:var(--green)">${sim}</div><div class="slbl">a favor</div></div>
+        <div class="scard"><div class="snum" style="color:var(--red)">${nao}</div><div class="slbl">contra</div></div>
+        <div class="scard"><div class="snum" style="color:var(--amber)">${aus}</div><div class="slbl">ausente</div></div>
+      </div>`+
+    (dados.length?dados.map(v=>{
+      const t=(v.tipoVoto||'').toLowerCase();
+      const d=v.dataHoraVoto?v.dataHoraVoto.split('T')[0].split('-').reverse().join('/'):'';
+      return `<div class="vitem"><div class="vbadge ${vbCls(t)}">${vbLbl(t)}</div><div><div class="vdesc">${(v.proposicaoTexto||'Votação registrada').slice(0,120)}...</div>${d?`<div class="vdata">${d}</div>`:''}</div></div>`;
+    }).join(''):'<div class="erro">Sem votações.</div>');
+  } catch(e) {
+    document.getElementById('dep-tab-vot').innerHTML='<div class="erro">Erro ao carregar votações.</div>';
+  }
+}
+
+// ============================================================
+// SENADORES
+// ============================================================
+async function carregarSens() {
+  const fill=document.getElementById('pf-sen');
+  fill.style.width='20%';
+  document.getElementById('lbl-sen').textContent='Carregando senadores...';
+  try {
+    const r=await fetch('https://legis.senado.leg.br/dadosabertos/senador/lista/atual.json');
+    fill.style.width='80%';
+    const data=await r.json();
+    const lista=data?.ListaParlamentarEmExercicio?.Parlamentares?.Parlamentar||[];
+    sens=lista.map(s=>({
+      id:s.IdentificacaoParlamentar?.CodigoParlamentar,
+      nome:s.IdentificacaoParlamentar?.NomeParlamentar,
+      nomeCompleto:s.IdentificacaoParlamentar?.NomeCompletoParlamentar,
+      siglaPartido:s.IdentificacaoParlamentar?.SiglaPartidoParlamentar,
+      siglaUf:s.IdentificacaoParlamentar?.UfParlamentar,
+      urlFoto:s.IdentificacaoParlamentar?.UrlFotoParlamentar,
+      email:s.IdentificacaoParlamentar?.EmailParlamentar,
+    }));
+    fill.style.width='100%';
+    setTimeout(()=>document.getElementById('pb-sen').style.display='none',400);
+    document.getElementById('lbl-sen').textContent=sens.length+' senadores encontrados';
+    const pts=[...new Set(sens.map(s=>s.siglaPartido).filter(Boolean))].sort().slice(0,6);
+    document.getElementById('filtros-sen').innerHTML=[
+      '<button class="fbtn active" onclick="setSenF(\'todos\',this)">Todos</button>',
+      ...pts.map(p=>`<button class="fbtn" onclick="setSenF('${p}',this)">${p}</button>`)
+    ].join('');
+    renderSens(sens);
+    atualizarTodos();
+  } catch(e) {
+    document.getElementById('lista-sen').innerHTML='<div class="erro">Erro ao carregar senadores.<br>A API do Senado pode estar instável.</div>';
+  }
+}
+function setSenF(p,btn) {
+  senFAtivo=p;
+  document.getElementById('filtros-sen').querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); filtrarSen();
+}
+function filtrarSen() {
+  const q=document.getElementById('busca-sen').value.toLowerCase();
+  let l=sens;
+  if(senFAtivo!=='todos') l=l.filter(s=>s.siglaPartido===senFAtivo);
+  if(q) l=l.filter(s=>s.nome.toLowerCase().includes(q));
+  renderSens(l);
+}
+function renderSens(lista) {
+  document.getElementById('lbl-sen').textContent=lista.length+' senadores encontrados';
+  document.getElementById('lista-sen').innerHTML=lista.slice(0,81).map(s=>`
+    <div class="card" onclick="abrirSen('${s.id}','${(s.nome||'').replace(/'/g,"\\'")}','${s.siglaPartido||''}','${s.siglaUf||''}','${s.urlFoto||''}')">
+      <div class="ava blue"><img src="${s.urlFoto}" onerror="this.parentElement.innerHTML='${ini(s.nome)}'" /></div>
+      <div style="flex:1;min-width:0"><div class="cname">${s.nome}</div><div class="cmeta">${s.siglaPartido||'—'} · ${s.siglaUf||'—'}</div></div>
+      <div class="badge badge-blue">${s.siglaUf||'—'}</div>
+    </div>`).join('')||'<div class="erro">Nenhum resultado.</div>';
+}
+async function abrirSen(id,nome,partido,uf,foto) {
+  senAtual={id,nome,partido,uf,foto}; senVotOk=false;
+  document.getElementById('sen-lista').classList.add('hidden');
+  document.getElementById('sen-perfil').classList.remove('hidden');
+  const av=foto?`<img src="${foto}" onerror="this.parentElement.innerHTML='${ini(nome)}'" />`:ini(nome);
+  document.getElementById('sen-pfhdr').innerHTML=`
+    <div class="pfhdr">
+      <div class="pfava blue">${av}</div>
+      <div><div class="pfname">${nome}</div><div class="pfsub">${uf} · Senado Federal</div><span class="tag tag-blue">${partido}</span></div>
+    </div>
+    <div class="sgrid" id="sen-stats">
+      <div class="scard"><div class="snum">—</div><div class="slbl">matérias</div></div>
+      <div class="scard"><div class="snum">ativo</div><div class="slbl">status</div></div>
+      <div class="scard"><div class="snum">—</div><div class="slbl">estado</div></div>
+    </div>`;
+  document.getElementById('sen-tab-mat').innerHTML='<div class="loading">Carregando <span class="dot"></span></div>';
+  document.getElementById('sen-tab-vot').innerHTML='';
+  document.getElementById('sen-tabs').querySelectorAll('.tab')[0].classList.add('active');
+  document.getElementById('sen-tabs').querySelectorAll('.tab')[1].classList.remove('active');
+  document.getElementById('sen-tab-mat').classList.remove('hidden');
+  document.getElementById('sen-tab-vot').classList.add('hidden');
+  try {
+    const r=await fetch(`https://legis.senado.leg.br/dadosabertos/senador/${id}/autorias.json?tipomateria=&data=`);
+    const data=await r.json();
+    const m=data?.AutoriasParlamentar?.Materias?.Materia||[];
+    const lista=Array.isArray(m)?m:[m];
+    document.getElementById('sen-stats').innerHTML=`
+      <div class="scard"><div class="snum">${lista.length}</div><div class="slbl">matérias</div></div>
+      <div class="scard"><div class="snum">ativo</div><div class="slbl">status</div></div>
+      <div class="scard"><div class="snum">${uf}</div><div class="slbl">estado</div></div>`;
+    document.getElementById('sen-tab-mat').innerHTML=lista.length?lista.slice(0,8).map(x=>{
+      const i2=x.IdentificacaoMateria;
+      return `<div class="pitem"><div class="ptype">${i2?.SiglaSubtipoMateria||'Matéria'} ${i2?.NumeroMateria||''}/${i2?.AnoMateria||''}</div><div class="ptext">${(x.DadosBasicosMateria?.EmentaMateria||'Sem descrição').slice(0,140)}...</div></div>`;
+    }).join(''):'<div class="erro">Nenhuma matéria encontrada.</div>';
+  } catch(e) {
+    document.getElementById('sen-tab-mat').innerHTML='<div class="erro">Erro ao carregar matérias.</div>';
+  }
+}
+function senTab(tab,btn) {
+  document.getElementById('sen-tabs').querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('sen-tab-mat').classList.toggle('hidden',tab!=='mat');
+  document.getElementById('sen-tab-vot').classList.toggle('hidden',tab!=='vot');
+  if(tab==='vot'&&!senVotOk) { senVotOk=true; carregarSenVot(); }
+}
+async function carregarSenVot() {
+  document.getElementById('sen-tab-vot').innerHTML='<div class="loading">Carregando votações <span class="dot"></span></div>';
+  try {
+    const r=await fetch(`https://legis.senado.leg.br/dadosabertos/senador/${senAtual.id}/votacoes.json`);
+    const data=await r.json();
+    const vv=data?.VotacaoParlamentar?.Parlamentar?.Votacoes?.Votacao||[];
+    const lista=Array.isArray(vv)?vv:[vv];
+    const sim=lista.filter(v=>(v.DescricaoVoto||'').toLowerCase().includes('sim')).length;
+    const nao=lista.filter(v=>(v.DescricaoVoto||'').toLowerCase().includes('não')).length;
+    const abs=lista.filter(v=>(v.DescricaoVoto||'').toLowerCase().includes('absten')).length;
+    document.getElementById('sen-tab-vot').innerHTML=`
+      <div class="sgrid" style="margin-bottom:1rem">
+        <div class="scard"><div class="snum" style="color:var(--green)">${sim}</div><div class="slbl">a favor</div></div>
+        <div class="scard"><div class="snum" style="color:var(--red)">${nao}</div><div class="slbl">contra</div></div>
+        <div class="scard"><div class="snum" style="color:var(--amber)">${abs}</div><div class="slbl">abstenção</div></div>
+      </div>`+
+    (lista.length?lista.slice(0,15).map(v=>{
+      const t=(v.DescricaoVoto||'').toLowerCase();
+      const cls=t.includes('sim')?'vb-sim':t.includes('não')?'vb-nao':t.includes('absten')?'vb-abs':'vb-aus';
+      const lbl=t.includes('sim')?'A favor':t.includes('não')?'Contra':t.includes('absten')?'Abstenção':'Ausente';
+      const mat=v.IdentificacaoVotacao?.DescricaoVotacao||v.SiglaMateria||'Votação registrada';
+      const data=v.IdentificacaoVotacao?.DataSessao||'';
+      return `<div class="vitem"><div class="vbadge ${cls}">${lbl}</div><div><div class="vdesc">${mat.slice(0,120)}${mat.length>120?'...':''}</div>${data?`<div class="vdata">${data}</div>`:''}</div></div>`;
+    }).join(''):'<div class="erro">Sem votações encontradas.</div>');
+  } catch(e) {
+    document.getElementById('sen-tab-vot').innerHTML='<div class="erro">Erro ao carregar votações do Senado.</div>';
+  }
+}
+
+// ============================================================
+// TSE 2026
+// ============================================================
+function setCargoF(c,btn) {
+  cargoFAtivo=c;
+  document.getElementById('filtros-cargo').querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); filtrarTSE();
+}
+function filtrarTSE() {
+  const q=(document.getElementById('busca-tse').value||'').toLowerCase();
+  let l=MOCK_CANDS;
+  if(cargoFAtivo!=='todos') l=l.filter(c=>c.cargo===cargoFAtivo);
+  if(q) l=l.filter(c=>(c.nome+c.urna+c.partido).toLowerCase().includes(q));
+  renderTSE(l);
+}
+function renderTSE(lista) {
+  document.getElementById('lbl-tse').textContent=lista.length+' candidatos (referência 2022)';
+  const grupos={};
+  lista.forEach(c=>{ if(!grupos[c.cargo])grupos[c.cargo]=[]; grupos[c.cargo].push(c); });
+  const ordem=['presidente','governador','senador','deputado_federal'];
+  let html='';
+  ordem.forEach(cargo=>{
+    if(!grupos[cargo]) return;
+    const info=CARGO_INFO[cargo]||{label:cargo,badge:'badge'};
+    html+=`<div class="cargo-sec"><div class="cargo-tit">${info.label} <span class="cargo-cnt">${grupos[cargo].length} candidatos</span></div>`;
+    grupos[cargo].forEach(c=>{
+      const eleito=c.eleito?'<span class="badge badge-green" style="margin-left:6px">Eleito</span>':'';
+      html+=`<div class="card" onclick="abrirTSE(${c.id})">
+        <div class="ava" style="font-size:15px;font-weight:600;color:var(--green)">${ini(c.urna||c.nome)}</div>
+        <div style="flex:1;min-width:0"><div class="cname">${c.urna||c.nome}${eleito}</div><div class="cmeta">${c.partido} · ${c.uf==='BR'?'Nacional':c.uf}</div></div>
+        <div class="badge ${info.badge}">${info.label}</div>
+      </div>`;
+    });
+    html+='</div>';
+  });
+  document.getElementById('lista-tse').innerHTML=html||'<div class="erro">Nenhum resultado.</div>';
+}
+function abrirTSE(id) {
+  const c=MOCK_CANDS.find(x=>x.id===id); if(!c) return;
+  tseAtual=c;
+  document.getElementById('tse-lista').classList.add('hidden');
+  document.getElementById('tse-perfil').classList.remove('hidden');
+  const info=CARGO_INFO[c.cargo]||{label:c.cargo};
+  const eleito=c.eleito?'<span class="tag tag-green">Eleito em 2022</span>':'<span class="tag tag-amber">Não eleito em 2022</span>';
+  document.getElementById('tse-pfhdr').innerHTML=`
+    <div class="pfhdr">
+      <div class="pfava" style="font-size:20px;font-weight:600;color:var(--green)">${ini(c.urna||c.nome)}</div>
+      <div>
+        <div class="pfname">${c.urna||c.nome}</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:1px">${c.nome}</div>
+        <div class="pfsub">${info.label} · ${c.uf==='BR'?'Nacional':c.uf}</div>
+        <span class="tag tag-green">${c.partido}</span>${eleito}
+      </div>
+    </div>
+    <div class="sgrid">
+      <div class="scard"><div class="snum" style="font-size:14px">${brl(c.bens).replace('R$\u00a0','').replace('R$ ','')}</div><div class="slbl">bens declarados</div></div>
+      <div class="scard"><div class="snum">${c.numero||'—'}</div><div class="slbl">número urna</div></div>
+      <div class="scard"><div class="snum">${c.nasc||'—'}</div><div class="slbl">nascimento</div></div>
+    </div>`;
+  document.getElementById('tse-tab-dados').innerHTML=`
+    <div style="margin-bottom:1.5rem">
+      <div class="irow"><span class="ilbl">Nome completo</span><span class="ival">${c.nome}</span></div>
+      <div class="irow"><span class="ilbl">Nome na urna</span><span class="ival">${c.urna}</span></div>
+      <div class="irow"><span class="ilbl">Cargo</span><span class="ival">${info.label}</span></div>
+      <div class="irow"><span class="ilbl">Partido</span><span class="ival">${c.partido}</span></div>
+      <div class="irow"><span class="ilbl">Estado</span><span class="ival">${c.uf==='BR'?'Nacional':c.uf}</span></div>
+      <div class="irow"><span class="ilbl">Gênero</span><span class="ival">${c.gen}</span></div>
+      <div class="irow"><span class="ilbl">Escolaridade</span><span class="ival">${c.grau}</span></div>
+      <div class="irow"><span class="ilbl">Ocupação declarada</span><span class="ival">${c.ocup}</span></div>
+      <div class="irow"><span class="ilbl">Resultado 2022</span><span class="ival">${c.eleito?'Eleito':'Não eleito'}</span></div>
+    </div>`;
+  document.getElementById('tse-tab-bens').innerHTML=c.bens>0?`
+    <div class="bem"><div class="bem-tipo">Patrimônio total declarado ao TSE</div><div class="bem-val">${brl(c.bens)}</div><div class="bem-desc">Valor declarado na candidatura de 2022</div></div>
+    <div class="aviso amber" style="margin-top:1rem"><div class="aviso-t">Sobre os bens declarados</div><div class="aviso-txt">Os bens são autodeclarados pelo candidato ao TSE. O TSE não verifica os valores. Fonte: <a href="https://dadosabertos.tse.jus.br" target="_blank" style="color:var(--amber)">dadosabertos.tse.jus.br</a></div></div>`:'<div class="erro">Dados de bens não disponíveis.</div>';
+  document.getElementById('tse-tab-hist').innerHTML=`
+    <div class="aviso blue" style="margin-bottom:1rem"><div class="aviso-t">Histórico eleitoral</div><div class="aviso-txt">Os dados completos de 2026 estarão disponíveis após o registro de candidaturas no TSE (previsão: agosto/2026).</div></div>
+    <div class="irow"><span class="ilbl">Eleição 2022</span><span class="ival">${info.label} — ${c.eleito?'Eleito':'Não eleito'}</span></div>
+    <div class="irow"><span class="ilbl">Partido 2022</span><span class="ival">${c.partido}</span></div>
+    <div class="irow"><span class="ilbl">Número urna 2022</span><span class="ival">${c.numero||'—'}</span></div>`;
+  document.getElementById('tse-tabs').querySelectorAll('.tab').forEach((b,i)=>{
+    b.classList.toggle('active',i===0);
+    const ts=['dados','bens','hist'];
+    b.onclick=()=>tseTab(ts[i],b);
+  });
+  ['dados','bens','hist'].forEach((t,i)=>document.getElementById('tse-tab-'+t).classList.toggle('hidden',i!==0));
+}
+function tseTab(tab,btn) {
+  document.getElementById('tse-tabs').querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  ['dados','bens','hist'].forEach(t=>document.getElementById('tse-tab-'+t).classList.toggle('hidden',t!==tab));
+}
+
+// ============================================================
+// COMPARAR
+// ============================================================
+function atualizarTodos() {
+  todos=[...deps.map(d=>({...d,_casa:'dep'})),...sens.map(s=>({...s,_casa:'sen'}))];
+}
+function filtrarComp() {
+  const q=document.getElementById('busca-comp').value.toLowerCase();
+  let l=todos;
+  if(q) l=l.filter(d=>d.nome.toLowerCase().includes(q));
+  renderComp(l);
+}
+function renderComp(lista) {
+  document.getElementById('lista-comp').innerHTML=(lista||[]).slice(0,40).map(d=>{
+    const isA=selA&&selA.id==d.id;
+    const isB=selB&&selB.id==d.id;
+    const cls=isA?'sel-a':isB?'sel-b':'';
+    const casaBadge=d._casa==='sen'?'<span class="badge badge-blue" style="margin-left:4px">Sen</span>':'<span class="badge" style="margin-left:4px">Dep</span>';
+    return `<div class="card ${cls}" onclick="selComp(${d.id},'${(d.nome||'').replace(/'/g,"\\'")}','${d.siglaPartido||''}','${d.siglaUf||''}','${d.urlFoto||''}','${d._casa}')">
+      <div class="ava ${d._casa==='sen'?'blue':''}"><img src="${d.urlFoto}" onerror="this.parentElement.innerHTML='${ini(d.nome)}'" /></div>
+      <div style="flex:1;min-width:0"><div class="cname">${d.nome}</div><div class="cmeta">${d.siglaPartido||'—'} · ${d.siglaUf||'—'}</div></div>
+      ${casaBadge}
+    </div>`;
+  }).join('')||'<div class="erro">Nenhum resultado.</div>';
+}
+function selComp(id,nome,partido,uf,foto,casa) {
+  const dep={id,nome,partido,uf,foto,casa};
+  if(!selA) { selA=dep; renderSlot('a',dep); document.getElementById('lbl-comp').textContent='Agora escolha o candidato B'; }
+  else if(!selB&&selA.id!=id) {
+    selB=dep; renderSlot('b',dep);
+    document.getElementById('lbl-comp').textContent='Prontos para comparar!';
+    document.getElementById('btn-comp').disabled=false;
+    document.getElementById('comp-busca-area').style.display='none';
+  }
+  renderComp(todos);
+}
+function renderSlot(s,dep) {
+  const i=ini(dep.nome);
+  const av=dep.foto?`<img src="${dep.foto}" onerror="this.parentElement.innerHTML='${i}'" style="width:32px;height:32px;border-radius:50%;object-fit:cover"/>`:i;
+  const cls=s==='a'?'fa':'fb';
+  const lbl=s==='a'?'Candidato A':'Candidato B';
+  const casaLbl=dep.casa==='sen'?'Senado':'Câmara';
+  document.getElementById('slot-'+s).className='slot '+cls;
+  document.getElementById('slot-'+s).innerHTML=`
+    <div class="slot-label ${s}">${lbl}</div>
+    <div style="width:32px;height:32px;border-radius:50%;overflow:hidden;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:${s==='a'?'var(--green)':'var(--blue)'}">${av}</div>
+    <div class="slot-name">${dep.nome}</div>
+    <div class="slot-meta">${dep.partido} · ${dep.uf} · ${casaLbl}</div>
+    <div class="slot-rm" onclick="rmSlot('${s}')">remover ×</div>`;
+}
+function rmSlot(s) {
+  if(s==='a') selA=null; else selB=null;
+  document.getElementById('slot-'+s).className='slot';
+  document.getElementById('slot-'+s).innerHTML=`<div class="slot-label ${s}">${s==='a'?'Candidato A':'Candidato B'}</div><div class="slot-empty">Selecione abaixo</div>`;
+  document.getElementById('btn-comp').disabled=true;
+  document.getElementById('comp-busca-area').style.display='block';
+  document.getElementById('comp-res').innerHTML='';
+  document.getElementById('lbl-comp').textContent=selA?'Agora escolha o candidato B':'Escolha o candidato A';
+  renderComp(todos);
+}
+async function executarComp() {
+  if(!selA||!selB) return;
+  document.getElementById('comp-res').innerHTML='<div class="loading">Carregando dados <span class="dot"></span></div>';
+  document.getElementById('btn-comp').disabled=true;
+  let propsA=0,propsB=0,votA=[],votB=[];
+  try {
+    const fts=[];
+    if(selA.casa==='dep') {
+      fts.push(fetch(`https://dadosabertos.camara.leg.br/api/v2/proposicoes?idDeputadoAutor=${selA.id}&itens=20`).then(r=>r.json()).then(d=>{propsA=(d.dados||[]).length;}));
+      fts.push(fetch(`https://dadosabertos.camara.leg.br/api/v2/deputados/${selA.id}/votacoes?itens=20&ordem=DESC&ordenarPor=dataHoraVoto`).then(r=>r.json()).then(d=>{votA=d.dados||[];}));
+    }
+    if(selB.casa==='dep') {
+      fts.push(fetch(`https://dadosabertos.camara.leg.br/api/v2/proposicoes?idDeputadoAutor=${selB.id}&itens=20`).then(r=>r.json()).then(d=>{propsB=(d.dados||[]).length;}));
+      fts.push(fetch(`https://dadosabertos.camara.leg.br/api/v2/deputados/${selB.id}/votacoes?itens=20&ordem=DESC&ordenarPor=dataHoraVoto`).then(r=>r.json()).then(d=>{votB=d.dados||[];}));
+    }
+    await Promise.all(fts);
+    const st=vv=>({
+      sim:vv.filter(v=>(v.tipoVoto||'').toLowerCase()==='sim').length,
+      nao:vv.filter(v=>['não','nao'].includes((v.tipoVoto||'').toLowerCase())).length,
+      aus:vv.filter(v=>(v.tipoVoto||'').toLowerCase()==='ausente').length,
+      total:vv.length
+    });
+    const sA=st(votA),sB=st(votB);
+    const pA=sA.total?Math.round(((sA.total-sA.aus)/sA.total)*100):0;
+    const pB=sB.total?Math.round(((sB.total-sB.aus)/sB.total)*100):0;
+    const w=(a,b)=>a>b?['win-a','']:a<b?['','win-b']:['',''];
+    const [wpA,wpB]=w(propsA,propsB);
+    const [wrA,wrB]=w(pA,pB);
+    const [wsA,wsB]=w(sA.sim,sB.sim);
+    const avA=selA.foto?`<img src="${selA.foto}" onerror="this.parentElement.innerHTML='${ini(selA.nome)}'" style="width:100%;height:100%;object-fit:cover"/>`:ini(selA.nome);
+    const avB=selB.foto?`<img src="${selB.foto}" onerror="this.parentElement.innerHTML='${ini(selB.nome)}'" style="width:100%;height:100%;object-fit:cover"/>`:ini(selB.nome);
+    const cA=selA.casa==='sen'?'Senado':'Câmara', cB=selB.casa==='sen'?'Senado':'Câmara';
+    document.getElementById('comp-res').innerHTML=`
+      <div class="comp-hdr">
+        <div class="comp-side a"><div class="comp-ava a">${avA}</div><div class="comp-name">${selA.nome}</div><div class="comp-sub">${selA.partido} · ${cA}</div></div>
+        <div class="vs-txt">vs</div>
+        <div class="comp-side b"><div class="comp-ava b">${avB}</div><div class="comp-name">${selB.nome}</div><div class="comp-sub">${selB.partido} · ${cB}</div></div>
+      </div>
+      <div class="slabel" style="margin-bottom:10px">Indicadores</div>
+      <div style="margin-bottom:1.5rem">
+        ${[[propsA,propsB,wpA,wpB,'proposições'],[pA+'%',pB+'%',wrA,wrB,'presença votações'],[sA.sim,sB.sim,wsA,wsB,'votos a favor'],[sA.nao,sB.nao,'','','votos contra'],[sA.aus,sB.aus,'','','ausências']].map(([va,vb,ca,cb,lbl])=>`
+        <div class="comp-row">
+          <div class="comp-val ${ca}">${va}</div>
+          <div class="comp-lbl">${lbl}</div>
+          <div class="comp-val ${cb}" style="color:${cb==='win-b'?'var(--blue)':'var(--text)'}">${vb}</div>
+        </div>`).join('')}
+      </div>
+      <button class="abtn" onclick="novaComp()">Nova comparação</button>`;
+    document.getElementById('btn-comp').disabled=false;
+  } catch(e) {
+    document.getElementById('comp-res').innerHTML='<div class="erro">Erro ao carregar dados. Tente novamente.</div>';
+    document.getElementById('btn-comp').disabled=false;
+  }
+}
+function novaComp() {
+  selA=null; selB=null;
+  rmSlot('a'); rmSlot('b');
+  document.getElementById('comp-res').innerHTML='';
+  document.getElementById('comp-busca-area').style.display='block';
+}
+
+// ============================================================
+// BACK BUTTONS
+// ============================================================
+function voltarLista(section) {
+  if(section==='dep') { document.getElementById('dep-lista').classList.remove('hidden'); document.getElementById('dep-perfil').classList.add('hidden'); }
+  if(section==='sen') { document.getElementById('sen-lista').classList.remove('hidden'); document.getElementById('sen-perfil').classList.add('hidden'); }
+  if(section==='tse') { document.getElementById('tse-lista').classList.remove('hidden'); document.getElementById('tse-perfil').classList.add('hidden'); }
+}
+
+// ============================================================
+// INIT
+// ============================================================
+carregarDeps();
+renderTSE(MOCK_CANDS);
+renderComp([]);
+</script>
+</body>
+</html>
